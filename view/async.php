@@ -3,22 +3,36 @@
     <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script>
 
     <script language="javascript" type="text/javascript">
-    $("#friends_btn").click(function() {
-        $.ajax({
-            url: 'fetch.php',
-            data: "",
-            dataType: 'json',
-            success: function(data)
-            {
-                var fName = data[0];
-                var lName = data[1];
-                var age = data[2];
-                $("#friends").html(fName + " " + lName + " age:" + age);
-            }
+    
+    $(document).ready(function() {
+        $("#friends_btn").click(function() {
+            $.ajax({
+                type: "POST",
+                url: '../controller/fetch.php',
+                data: "",
+                //async: false,
+                dataType: 'JSON',
+                success: function(data)
+                {
+                    
+                    for (var i = 0; i<data.length; i++)
+                    {
+                        var row = data[i];
+                        var fName = row["FirstName"];
+                        var lName = row["LastName"];
+                        var age = row["Age"];
+                        $("#friends").append(fName + " " + lName + " age:" + age+"</br>");
+                    }
+                    
+                },
+                error:function(xhr, ajaxOptions, thrownError){
+                    $("#friends").append(xhr.status);
+                    $("#friends").append(thrownError);
+                }
+            });
+
         });
-
     });
-
 
     </script>
     </head>
