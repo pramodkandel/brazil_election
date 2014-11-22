@@ -8,10 +8,25 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
+
+p{
+width:auto;
+height: auto;
+position:center;
+}
+.panel-body
+{
+max-height:40px;
+}
+.panel-body{
+width:100%;
+height:100%;
+position:relative;
+}
 .footer {
   position: absolute;
   bottom: 0;
-  width: 100%;
+  width: 680px;
   /* Set the fixed height of the footer here */
   height: 60px;
   background-color: #f5f5f5;
@@ -21,9 +36,6 @@ body {
 /* Custom page CSS
 -------------------------------------------------- */
 /* Not required for template or sticky footer method. */
-.boxes{
-border: 2px solid;
-}
 .container {
   width: auto;
   max-width: 680px;
@@ -32,3 +44,4 @@ border: 2px solid;
 .container .text-muted {
   margin: 20px 0;
 }
+
