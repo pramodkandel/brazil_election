@@ -3,7 +3,6 @@
 <html>
     <head>
         <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script>
-
         <script language="javascript" type="text/javascript">
             $(document).ready(function(){
                 $("#cand_btn").click(function(){
@@ -43,12 +42,8 @@
                             $("#retrieved").append("ERROR");
                         }
                     });
-
                 });
-
             });
-
-
         </script>
     </head>
     <body>
