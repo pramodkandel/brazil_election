@@ -8,14 +8,14 @@ body {
   /* Margin bottom by footer height */
   margin-bottom: 60px;
 }
-
 p{
 width:auto;
 height: auto;
-position:center;
+margin: 0 0 0 0;
 }
 .panel-body
 {
+text-align: center;
 max-height:40px;
 }
 .panel-body{
