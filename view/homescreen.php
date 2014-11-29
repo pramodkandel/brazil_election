@@ -110,6 +110,7 @@
                     theState["events_stack"].push("number"+"#keypad9");
                     console.log(theState);
                 });
+<<<<<<< HEAD
                 $("#keypad0").click(function(){
                     var theState = stateModule.getStates();
                     $("#box".concat(theState["cursor_position"])).append("0");
@@ -117,6 +118,8 @@
                     theState["events_stack"].push("number"+"#keypad0");
                     console.log(theState);
                 });
+=======
+>>>>>>> 3fa544ffd95e113322e95c2b59c80b5ecbb783ef
                 $("#keypadUndo").click(function(){
                     var theState = stateModule.getStates();
                     var lastEvent = theState["events_stack"].pop();  
@@ -181,6 +184,7 @@
         </script>
     </head>
     <body>
+<<<<<<< HEAD
         <!-- Begin page content -->
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
@@ -332,6 +336,120 @@
                     </div>
                 </div>
             </div>
+=======
+        <button id = "cand_btn">Get Candidates</button>
+        <div id="retrieved">
+        </div>
+        <!-- Begin page content -->
+        <div class="container" style="width:1000px;">
+        <div class="row" style="max-width:1000px;">
+        <div class="col-xs-12" style="max-width:680px;">
+        <div class="container">
+          <div class="page-header">
+            <h1>Race Name</h1>
+            <div class="row">
+            <div class="col-xs-2">
+            <div class="panel panel-default">
+            <div class="panel-body">
+            <p id="box0">  </p>
+            </div>
+            </div>
+            </div>
+            <div class="col-xs-2">
+            <div class="panel panel-default">
+            <div class="panel-body">
+            <p id="box1">  </p>
+            </div>
+            </div>
+            </div>
+            <div class="col-xs-2">
+            <div class="panel panel-default">
+            <div class="panel-body">
+            <p id="box2" >  </p>
+            </div>
+            </div>
+            </div>
+            <div class="col-xs-2">
+            <div class="panel panel-default">
+            <div class="panel-body">
+            <p id="box3">  </p>
+            </div>
+            </div>
+            </div>
+            <div class="col-xs-2">
+            <div class="panel panel-default">
+            <div class="panel-body">
+            <p id="box4">  </p>
+            </div>
+            </div>
+            </div>
+            </div>
+            <div>
+            </div>
+        
+          </div>
+          <div class="row">
+          <div class="col-xs-4" style="opacity:.2">
+          </div>
+          <div class="row">
+          <div class="col-xs-4" style="opacity:.2">
+          </div>
+          </div>
+        
+        </div>
+        
+        </div>
+        </div>
+        <footer class="footer">
+            <p class="text-muted">
+            Press Confirm to cast vote <br> Press Search to filter only the relevant result</br></p>
+        </footer>
+        <div class="col-xs-4" style="width:320px;height:400px">
+
+        <div class="row" style="width:320px;height:220px">
+        <div class="col-xs-1"> 
+        </div>
+        <div class="col-xs-1"> 
+        </div>
+        <div class="col-xs-1"> 
+        </div>
+        </div>
+         <div class="row" style="height:75px">
+        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
+      <button type="button" class="btn btn-default btn-lg" id="keypad1">1</button>
+      <button type="button" class="btn btn-default btn-lg" id="keypad2">2</button>
+      <button type="button" class="btn btn-default btn-lg" id="keypad3">3</button>
+      </div>
+        </div>
+        </div>
+         <div class="row" style="height:75px">
+        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
+      <button type="button" class="btn btn-default btn-lg" id="keypad4">4</button>
+      <button type="button" class="btn btn-default btn-lg" id="keypad5">5</button>
+      <button type="button" class="btn btn-default btn-lg" id="keypad6">6</button>
+      </div>
+        </div>
+        </div>
+         <div class="row" style="height:75px">
+        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
+      <button type="button" class="btn btn-default btn-lg" id="keypad7">7</button>
+      <button type="button" class="btn btn-default btn-lg" id="keypad8">8</button>
+      <button type="button" class="btn btn-default btn-lg" id="keypad9">9</button>
+      </div>
+        </div>
+        
+        </div>
+        <div class="row" style="height:50px">
+        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
+      <button type="button" class="btn btn-default btn-lg" style="background-color:blue; color:white" id="keypadSearch">Search</button>
+      <button type="button" class="btn btn-default btn-lg" style="background-color:orange; color:black" id="keypadUndo">Undo</button>
+      <button type="button" class="btn btn-default btn-lg" style="background-color:green; color:white"  id="keypadConfirm">Confirm</button>
+      </div>
+        </div>
+        </div>
+        </div>
+        </div>
+>>>>>>> 3fa544ffd95e113322e95c2b59c80b5ecbb783ef
         </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="../bootstrap-3.3.1/assets/js/ie10-viewport-bug-workaround.js"></script>
