@@ -301,14 +301,7 @@
                             </div>
                     </div>
                 </div> 
-             <div class="container">
-                <footer class="footer" style="width:400px; margin-top:1000px;">
-                            <p class="text-muted">
-                                Press Confirm to cast vote <br> Press Search to filter only the relevant result</br>
-                            </p>
-                </footer>
             </div> 
-            </div>
             
             <div class="col-xs-4" style="width:320px;height:400px">
                 <div class="row" style="width:320px;height:100px">
@@ -361,10 +354,17 @@
                             <button type="button" class="btn btn-default btn-lg" style="background-color:green; color:white"  id="keypadConfirm">Confirm</button>
                         </div>
                     </div>
-                    </div>
                 </div>
             </div>
         </div>
+     </div>
+     <div class="row" style="margin-left:1px">
+        <footer class="footer" style="width:400px;">
+            <p class="text-muted">
+                Press Confirm to cast vote <br> Press Search to filter only the relevant result</br>
+            </p>
+        </footer>
+    </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="../bootstrap-3.3.1/assets/js/ie10-viewport-bug-workaround.js"></script>
 
