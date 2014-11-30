@@ -309,7 +309,7 @@
                 </div> 
             </div>
             <div class="col-xs-4" style="width:320px;height:400px">
-                <div class="row" style="width:320px;height:220px">
+                <div class="row" style="width:320px;height:100px">
                     <div class="col-xs-1"> </div>
                     <div class="col-xs-1"> </div>
                     <div class="col-xs-1"> </div>
