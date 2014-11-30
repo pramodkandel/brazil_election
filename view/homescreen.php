@@ -34,6 +34,7 @@
                     state["vote_input"] = "";
                     state["race_name"] = "Ice Cream";
                     state["party_info"] = ["Angry party", "94", "angry.jpg", "Angry Candidate"];
+                    state["candidate_info"] = ["Candidate Name", "CandidateNumber", "candidate.jpg"];
                 var pub = {};// public object - returned at end of module
                 pub.changeState = function (state_key, new_state_value) {
                     state[state_key] = new_state_value;
@@ -131,7 +132,8 @@
                 });
                 function udpate_view() {
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
-                    if (parseInt(stateModule.getState("cursor_position")) >= 2) { // party selected
+                    // Displaying Party Info
+                    if (parseInt(stateModule.getState("cursor_position")) >= 2) { // if party selected
                         var party_info = stateModule.getState("party_info");
                         var party_selected_str =    "<div class='col-xs-2'>" + 
                                                         "<img src= "+ party_info[2] + " alt= " + party_info[3] + "style='width:100px;height:100px'>" +
@@ -143,8 +145,24 @@
                                                         "<h3> Party number: " + party_info[1] + "</h3>" +
                                                     "</div>";
                         $("#party_selected").html(party_selected_str);
-                    } else {
+                    } else { // if party not selected
                         $("#party_selected").html("");
+                    }
+                    // Displaying Candidates
+                    if (parseInt(stateModule.getState("cursor_position")) == 5) { // if candidate selected
+                        var candidate_info = stateModule.getState("candidate_info");
+                        var candidate_selected_str =    "<div class='col-xs-2'>" + 
+                                                        "<img src= "+ candidate_info[2] + " style='width:100px;height:100px'>" +
+                                                    "</div>" + 
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Candidate name: " + candidate_info[0] + " </h3>" + 
+                                                    "</div>" +
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Candidate number: " + candidate_info[1] + "</h3>" +
+                                                    "</div>";
+                        $("#candidate_selected").html(candidate_selected_str);
+                    } else { // if party not selected
+                        $("#candidate_selected").html("");
                     }
                 }
                 $("#keypadSearch").click(function(){
@@ -246,7 +264,10 @@
                                 </div>
                             </div>
                             <div class="row" id="party_selected">
-                                <!-- TODO only display if single party option, check State-->
+                                <!-- only display if single party option-->
+                            </div>
+                            <div class="row" id="candidate_selected">
+                                <!-- only display if single candidate option-->
                             </div>
                             <div></div>
                         </div>
