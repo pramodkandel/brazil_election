@@ -299,15 +299,17 @@
                                 <h3> Candidate name</h3>
                                 <h3> Candidate number</h3>
                             </div>
-                        <footer class="footer">
+                    </div>
+                </div> 
+             <div class="container">
+                <footer class="footer" style="width:400px; margin-top:1000px;">
                             <p class="text-muted">
                                 Press Confirm to cast vote <br> Press Search to filter only the relevant result</br>
                             </p>
-                        </footer>
-
-                    </div>
-                </div> 
+                </footer>
+            </div> 
             </div>
+            
             <div class="col-xs-4" style="width:320px;height:400px">
                 <div class="row" style="width:320px;height:100px">
                     <div class="col-xs-1"> </div>
