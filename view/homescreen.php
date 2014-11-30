@@ -315,8 +315,8 @@
                     <div class="col-xs-1"> </div>
                 </div>
                 <div class="container" style="border:solid;border-width:2px; width:300px;">
-                <div class="row" style="height:75px;margin-top:20px">
-                    <div class="col-xs-3" style="width:320px">  
+                <div class="row" style="height:75px;margin-top:20px;">
+                    <div class="col-xs-3" style="width:320px; margin-left: 50px">  
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber1">1</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber2">2</button>
@@ -325,7 +325,7 @@
                     </div>
                 </div>
                 <div class="row" style="height:75px">
-                    <div class="col-xs-3" style="width:320px">
+                    <div class="col-xs-3" style="width:320px; margin-left: 50px">
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber4">4</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber5">5</button>
@@ -334,7 +334,7 @@
                     </div>
                 </div>
                 <div class="row" style="height:75px">
-                    <div class="col-xs-3" style="width:320px">
+                    <div class="col-xs-3" style="width:320px; margin-left: 50px">
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber7">7</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber8">8</button>
@@ -343,7 +343,7 @@
                     </div>
                 </div>
                 <div class="row" style="height:75px">
-                    <div class="col-xs-3" style="width:320px">
+                    <div class="col-xs-3" style="width:320px;margin-left: 50px">
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypad*">*</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber0">0</button>
@@ -351,7 +351,7 @@
                         </div>
                     </div>
                 </div>
-                <div class="row" style="height:50px">
+                <div class="row" style="height:75px">
                     <div class="col-xs-3" style="width:320px">
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" style="background-color:blue; color:white" id="keypadSearch">Search</button>
