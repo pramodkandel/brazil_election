@@ -314,7 +314,8 @@
                     <div class="col-xs-1"> </div>
                     <div class="col-xs-1"> </div>
                 </div>
-                <div class="row" style="height:75px">
+                <div class="container" style="border:solid;border-width:2px; width:300px;">
+                <div class="row" style="height:75px;margin-top:20px">
                     <div class="col-xs-3" style="width:320px">  
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber1">1</button>
@@ -357,6 +358,7 @@
                             <button type="button" class="btn btn-default btn-lg" style="background-color:orange; color:black" id="keypadUndo">Undo</button>
                             <button type="button" class="btn btn-default btn-lg" style="background-color:green; color:white"  id="keypadConfirm">Confirm</button>
                         </div>
+                    </div>
                     </div>
                 </div>
             </div>
