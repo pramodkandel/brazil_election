@@ -33,6 +33,7 @@
                     state["events_stack"] = new Array();
                     state["vote_input"] = "";
                     state["race_name"] = "Ice Cream";
+                    state["party_info"] = ["Angry party", "94", "angry.jpg", "Angry Candidate"];
                 var pub = {};// public object - returned at end of module
                 pub.changeState = function (state_key, new_state_value) {
                     state[state_key] = new_state_value;
@@ -110,7 +111,6 @@
                     theState["events_stack"].push("number"+"#keypad9");
                     console.log(theState);
                 });
-<<<<<<< HEAD
                 $("#keypad0").click(function(){
                     var theState = stateModule.getStates();
                     $("#box".concat(theState["cursor_position"])).append("0");
@@ -118,8 +118,6 @@
                     theState["events_stack"].push("number"+"#keypad0");
                     console.log(theState);
                 });
-=======
->>>>>>> 3fa544ffd95e113322e95c2b59c80b5ecbb783ef
                 $("#keypadUndo").click(function(){
                     var theState = stateModule.getStates();
                     var lastEvent = theState["events_stack"].pop();  
@@ -131,7 +129,26 @@
                     } 
                     console.log(theState);
                 });
+                function udpate_view() {
+                    cursor_position = parseInt(stateModule.getState("cursor_position"));
+                    if (parseInt(stateModule.getState("cursor_position")) >= 2) { // party selected
+                        var party_info = stateModule.getState("party_info");
+                        var party_selected_str =    "<div class='col-xs-2'>" + 
+                                                        "<img src= "+ party_info[2] + " alt= " + party_info[3] + "style='width:100px;height:100px'>" +
+                                                    "</div>" + 
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Party name: " + party_info[0] + " </h3>" + 
+                                                    "</div>" +
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Party number: " + party_info[1] + "</h3>" +
+                                                    "</div>";
+                        $("#party_selected").html(party_selected_str);
+                    } else {
+                        $("#party_selected").html("");
+                    }
+                }
                 $("#keypadSearch").click(function(){
+                    udpate_view();
                     console.log("Clicked keypadSearch");
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var race = stateModule.getState("race_name");
@@ -184,7 +201,6 @@
         </script>
     </head>
     <body>
-<<<<<<< HEAD
         <!-- Begin page content -->
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
@@ -229,13 +245,8 @@
                                     </div>
                                 </div>
                             </div>
-                            <div class="row">
+                            <div class="row" id="party_selected">
                                 <!-- TODO only display if single party option, check State-->
-                                <div class="col-xs-2">
-                                    <img src="angry.jpg" alt="Angry Candidate" style="width:100px;height:100px">
-                                </div>
-                                <div class="col-xs-4"><h3> Party name: Angry party</h3></div>
-                                <div class="col-xs-4"><h3> Party number: 93</h3></div>
                             </div>
                             <div></div>
                         </div>
@@ -336,120 +347,6 @@
                     </div>
                 </div>
             </div>
-=======
-        <button id = "cand_btn">Get Candidates</button>
-        <div id="retrieved">
-        </div>
-        <!-- Begin page content -->
-        <div class="container" style="width:1000px;">
-        <div class="row" style="max-width:1000px;">
-        <div class="col-xs-12" style="max-width:680px;">
-        <div class="container">
-          <div class="page-header">
-            <h1>Race Name</h1>
-            <div class="row">
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box0">  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box1">  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box2" >  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box3">  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box4">  </p>
-            </div>
-            </div>
-            </div>
-            </div>
-            <div>
-            </div>
-        
-          </div>
-          <div class="row">
-          <div class="col-xs-4" style="opacity:.2">
-          </div>
-          <div class="row">
-          <div class="col-xs-4" style="opacity:.2">
-          </div>
-          </div>
-        
-        </div>
-        
-        </div>
-        </div>
-        <footer class="footer">
-            <p class="text-muted">
-            Press Confirm to cast vote <br> Press Search to filter only the relevant result</br></p>
-        </footer>
-        <div class="col-xs-4" style="width:320px;height:400px">
-
-        <div class="row" style="width:320px;height:220px">
-        <div class="col-xs-1"> 
-        </div>
-        <div class="col-xs-1"> 
-        </div>
-        <div class="col-xs-1"> 
-        </div>
-        </div>
-         <div class="row" style="height:75px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" id="keypad1">1</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad2">2</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad3">3</button>
-      </div>
-        </div>
-        </div>
-         <div class="row" style="height:75px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" id="keypad4">4</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad5">5</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad6">6</button>
-      </div>
-        </div>
-        </div>
-         <div class="row" style="height:75px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" id="keypad7">7</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad8">8</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad9">9</button>
-      </div>
-        </div>
-        
-        </div>
-        <div class="row" style="height:50px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" style="background-color:blue; color:white" id="keypadSearch">Search</button>
-      <button type="button" class="btn btn-default btn-lg" style="background-color:orange; color:black" id="keypadUndo">Undo</button>
-      <button type="button" class="btn btn-default btn-lg" style="background-color:green; color:white"  id="keypadConfirm">Confirm</button>
-      </div>
-        </div>
-        </div>
-        </div>
-        </div>
->>>>>>> 3fa544ffd95e113322e95c2b59c80b5ecbb783ef
         </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="../bootstrap-3.3.1/assets/js/ie10-viewport-bug-workaround.js"></script>
