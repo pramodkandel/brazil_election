@@ -25,7 +25,7 @@
           <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
         <![endif]-->
         <!-- <script src="./script/number_click.js"> </script> -->
-        <script src="http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.11.1.min.js"></script>
+        <script src="js/jquery-min.js"></script>
         <script language="javascript" type="text/javascript">
             var stateModule = (function () {
                 var state = {}; // Private Variable
@@ -219,10 +219,32 @@
                         }
                     }
                 }
+
+
+		//returns rows from database selecting distinct parties.. if a party is duplicated in the input data, it 
+		//only chooses one of the rows
+		function get_party_data(data){
+		    var retrieved_party_nums = new Array(); //array keeping distinct party numbers retrieved from search
+
+		    var new_data = new Array();
+
+		    for (var i = 0; i<data.length; i++) {
+                        var row = data[i];
+                        var partyNum = row["PartyNumber"];
+			if ($.inArray(partyNum, retrieved_party_nums) == -1) { // if this party number not seen before
+			    retrieved_party_nums.push(partyNum);
+			    new_data.push(row);
+			}
+		    }
+		    return new_data;
+		}
+
+
                 function parse_search_data(data){
                     console.log("Inside parse_search_data")
                     var unique_party_info = [true, "partyName", "partyNum", "imgSrc", "alt_text"];
                     var unique_candidate_info = [true, "candName", "candNum", "imgSrc"];
+		    
                     if (data.length == 0) {
                         unique_party_info[0] = false;
                         unique_candidate_info[0] = false;
@@ -230,29 +252,53 @@
                         console.log("Inside interesting part of parse_search_data")
                         unique_party_info[1] = data[0]["PartyName"];
                         unique_party_info[2] = data[0]["PartyNumber"];
-                        unique_party_info[3] = data[0]["ImageSrc"];
+                        unique_party_info[3] = data[0]["PartyImageSrc"];
                         unique_candidate_info[1] = data[0]["CandidateName"];
                         unique_candidate_info[2] = data[0]["CandidateNumber"];
                         unique_candidate_info[3] = data[0]["ImageSrc"];
                         // TODO randomize data...
+			
+			//get distinct parties from the input data
+			var party_data = get_party_data(data);
+			if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search
+			    data = party_data;
+			}
                         if (data.length <= 9) {
                             for (var i = 0; i<data.length; i++)
                             {
                                 var row = data[i];
                                 var partyName = row["PartyName"];
                                 var partyNum = row["PartyNumber"];
+				var partyImgSrc = row["PartyImageSrc"];
                                 var candName = row["CandidateName"];
                                 var candNum = row["CandidateNumber"];
                                 var imgSrc = row["ImageSrc"];
                                 var race = row["Race"];
                                 var imgHtml = "<img src='"+imgSrc+"'> </img>";
-                                var html_candidate_str = "<div class='col-xs-4 candidateVisible' " + 
+
+				var html_str = "";
+				//TODO: I append party search in the search_result div, but probably we need to display somewhere else
+                                if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
+				    html_str = "<div class='col-xs-4 candidateVisible' " + 
+                                                    "id='search_result"+i.toString()+"'> " +
+                                                    "<img src='" + partyImgSrc + "' style='width:100px;height:95px'>" + 
+                                                    "<h3> " + partyName + "</h3>" +
+                                                    "<h3 id='search_result_candNum"+i.toString()+"'>" + partyNum + "</h3>" +
+                                                "</div>";
+    	                        } else { // candidate search
+    	    			    html_str = "<div class='col-xs-4 candidateVisible' " + 
                                                             "id='search_result"+i.toString()+"'> " +
                                                             "<img src='" + imgSrc + "' style='width:100px;height:95px'>" + 
                                                             "<h3> " + candName + "</h3>" +
                                                             "<h3 id='search_result_candNum"+i.toString()+"'>" + candNum + "</h3>" +
                                                         "</div>";
-                                $("#search_results").append(html_candidate_str);
+                		}
+     				$("#search_results").append(html_str);
+                                
+
+
+                                
+
                                 if (partyName != unique_party_info[1]) {
                                     unique_party_info[0] = false;
                                     unique_candidate_info[0] = false;
@@ -269,16 +315,19 @@
                 }
                 $("#keypadSearch").click(function(){
                     console.log("Clicked keypadSearch");
-                    //$("#retrieved").html("<img src='../images/loading.gif'>");
+		    //replace search_results div with a loading gif image until data is fetched
+                    $("#search_results").html("<img src='../images/loading.gif'>");
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var race = stateModule.getState("race_name");
                     var voterInput = getVoterInput(cursor_position);
-                    var retrievedPartyNums = new Array();
-                    //this is all the data to send to php
-                    $("#search_results").html("<p>DEBUGGING: This is for the race '" + race + "' and voter input '"+voterInput +"'. If you want to query for other things, open view/candidateInfo.php and change the variables 'race' and 'voterInput'. To add rows in database, go to https://sql.scripts.mit.edu/phpMyAdmin/ and type 'pramod' as both username and password and add to database 'pramod+friends' in table 'candidates'.</p>");
+                    
+		    //var retrievedPartyNums = new Array();
+                    
                     // TODO remove debugging message above and replace by "" to clear search_results box
                     data = {"Race":race, "VoterInput":voterInput}; 
-                    fake_data = new Array();
+
+                    /*
+		    fake_data = new Array();
                     for (var i = 0; i< 9; i++) {
                         fake_data.push({
                                 "PartyName": "Party" + (Math.floor(i/5)).toString(),
@@ -290,20 +339,22 @@
                     }
                     console.log("fake_data" + fake_data.toString());
                     parse_search_data(fake_data);
-                    /* $.ajax({
+		*/
+                    $.ajax({
                         type: "POST",
                         url: '../controller/query_candidates.php',
                         data: data,
                         dataType: 'JSON',
                         success: function(data)
                         {
+			    $("#search_results").html(""); //remove any data currently in search_results div
                             parse_search_data(data);
                         },
                         error: function()
                         {
                             $("#search_results").append("ERROR");
                         }
-                    }); */
+                    }); 
                     /*
     			    //remove the loading gif or anything that was in retrieved div
     			    $("#retrieved").html("");
