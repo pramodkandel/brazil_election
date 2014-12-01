@@ -122,7 +122,37 @@
                         udpate_view();
                     } else {
                         // TODO record vote in server
-                        $("#display").html("<h1>END</h1>" + "<p>TODO record vote in server</p>")
+
+			var voted_candidate = true; //change it. Figure out whether they voted for candidate
+
+			var candidate_num = "";
+			var race = "";
+			var voter_input = "";
+			if (voted_candidate){
+			    candidate_num = "91005"; //change with the real one when submitting
+
+			}else {// I don't have option for voted_party, but this condition works for any input
+			    race = "Burger"; //change this
+			    voter_input = "912"; //extract this dynamically
+			}
+			data = {"voted_candidate":voted_candidate, "candidate_num":candidate_num, "race":race, "voter_input":voter_input};
+			$.ajax({
+                            type: "POST",
+                            url: '../controller/save_vote.php',
+                            data: data,
+                            //dataType: 'JSON',
+                            success: function(data)
+                            {
+			        $("#display").html("<h1>END</h1>" + "<p>Vote successfully Cast.</p>");
+                            },
+                            error: function()
+                            {
+                                $("#display").html("<h1>END</h1>" + "<p>Error in casting vote.</p>");
+                            }
+                        }); 
+
+
+                        //$("#display").html("<h1>END</h1>" + "<p>TODO record vote in server</p>")
                     }
                     console.log(theState);
                     udpate_view();
@@ -321,9 +351,7 @@
                     var race = stateModule.getState("race_name");
                     var voterInput = getVoterInput(cursor_position);
                     
-		    //var retrievedPartyNums = new Array();
                     
-                    // TODO remove debugging message above and replace by "" to clear search_results box
                     data = {"Race":race, "VoterInput":voterInput}; 
 
                     /*
@@ -355,43 +383,7 @@
                             $("#search_results").append("ERROR");
                         }
                     }); 
-                    /*
-    			    //remove the loading gif or anything that was in retrieved div
-    			    $("#retrieved").html("");
-                                for (var i = 0; i<data.length; i++)
-                                {
-                                    var row = data[i];
-                                    var partyName = row["PartyName"];
-                                    var partyNum = row["PartyNumber"];
-                                    var partyImgSrc = row["PartyImageSrc"];
-                                    var candName = row["CandidateName"];
-                                    var candNum = row["CandidateNumber"];
-                                    var candImgSrc = row["ImageSrc"];
-                                    var race = row["Race"];
 
-                                    var candImgHtml = "<img style='width:100px;height:95px' src='"+candImgSrc+"'> </img>";
-                                    var partyImgHtml = "<img src='"+partyImgSrc+"'></img>";
-
-                                    if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
-    				    if ($.inArray(partyNum, retrievedPartyNums) == -1){
-    				    	retrievedPartyNums.push(partyNum);
-    					//TODO: Delete the following line and put things in the overall framework Marco has developed. Maybe Marco should do this. Same with else statement
-    					$("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+"</br>"+partyImgHtml + "</br></br>");
-    				    }
-    				    
-
-    	                        } else { // candidate search
-    	    			    $("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+", Candidate Name: "+candName+", Candidate Number: "+candNum+"</br>"+candImgHtml + "</br></br>");
-                		        }
-     
-                                }
-                            },
-                            error: function()
-                            {
-                                $("#retrieved").append("ERROR SEARCHING..");
-                            }
-                        });
-                        */
                     console.log("voterInput" + voterInput);
                 });
             });
