@@ -17,12 +17,12 @@ height: auto;
 text-align: center;
 max-height:40px;
 }
-#candidateHidden{
+.candidateHidden{
 opacity:.2;
 border-style:solid;
  border-width:1px;
 }
-#candidateVisible{
+.candidateVisible{
 border-style:solid;
  border-width:1px;
 }
