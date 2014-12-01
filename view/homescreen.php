@@ -122,28 +122,26 @@
                         udpate_view();
                     } else {
                         // TODO record vote in server
-
-			var voted_candidate = true; //change it. Figure out whether they voted for candidate
-
-			var candidate_num = "";
-			var race = "";
-			var voter_input = "";
-			if (voted_candidate){
-			    candidate_num = "91005"; //change with the real one when submitting
-
-			}else {// I don't have option for voted_party, but this condition works for any input
-			    race = "Burger"; //change this
-			    voter_input = "912"; //extract this dynamically
-			}
-			data = {"voted_candidate":voted_candidate, "candidate_num":candidate_num, "race":race, "voter_input":voter_input};
-			$.ajax({
+            			var voted_candidate = false; //change it. Figure out whether they voted for candidate
+                        var candidate_num = "";
+            			var race = "";
+                        var voter_input = "";
+            			if (voted_candidate){
+            			    candidate_num = "91005"; //change with the real one when submitting
+            			}else {// I don't have option for voted_party, but this condition works for any input
+            			    race = stateModule.getState("race_name");
+                            var cursor_position = stateModule.getState("cursor_position");
+                            voter_input = getVoterInput(cursor_position);
+            			}
+            			data = {"voted_candidate":voted_candidate, "candidate_num":candidate_num, "race":race, "voter_input":voter_input};
+            			$.ajax({
                             type: "POST",
                             url: '../controller/save_vote.php',
                             data: data,
                             //dataType: 'JSON',
                             success: function(data)
                             {
-			        $("#display").html("<h1>END</h1>" + "<p>Vote successfully Cast.</p>");
+                                $("#display").html("<h1>END</h1>" + "<p>Vote successfully Cast.</p>");
                             },
                             error: function()
                             {
@@ -158,15 +156,33 @@
                     udpate_view();
                 });
                 function udpate_data() {
+                    var cursor_position = parseInt(stateModule.getState("cursor_position"));
+                    var race = stateModule.getState("race_name");
+                    var voterInput = getVoterInput(cursor_position);
+                    data = {"Race":race, "VoterInput":voterInput}; 
+                    $.ajax({
+                        type: "POST",
+                        url: '../controller/query_candidates.php',
+                        data: data,
+                        dataType: 'JSON',
+                        success: function(data)
+                        {
+                            parse_search_data(data);
+                        },
+                        error: function()
+                        {
+                            console.log("ERROR in udpate_data request");
+                        }
+                    }); 
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var voterInput = getVoterInput(cursor_position);
                     // updating party selected data
                     party_info_data = stateModule.getState("party_info");
-                    party_info_data[0] = startsWith(voterInput, "94");
+                    party_info_data[0] = startsWith(voterInput, party_info_data[2]);
                     stateModule.changeState("party_info", party_info_data);
                     // updating candidate selected data
                     candidate_info_data = stateModule.getState("candidate_info");
-                    candidate_info_data[0] = startsWith(voterInput, "94001")
+                    candidate_info_data[0] = startsWith(voterInput, candidate_info_data[2]);
                     stateModule.changeState("candidate_info", candidate_info_data);
                 }
                 function udpate_view() {
@@ -250,31 +266,29 @@
                     }
                 }
 
+        		//returns rows from database selecting distinct parties.. if a party is duplicated in the input data, it 
+        		//only chooses one of the rows
+        		function get_party_data(data){
+        		    var retrieved_party_nums = new Array(); //array keeping distinct party numbers retrieved from search
 
-		//returns rows from database selecting distinct parties.. if a party is duplicated in the input data, it 
-		//only chooses one of the rows
-		function get_party_data(data){
-		    var retrieved_party_nums = new Array(); //array keeping distinct party numbers retrieved from search
+        		    var new_data = new Array();
 
-		    var new_data = new Array();
-
-		    for (var i = 0; i<data.length; i++) {
-                        var row = data[i];
-                        var partyNum = row["PartyNumber"];
-			if ($.inArray(partyNum, retrieved_party_nums) == -1) { // if this party number not seen before
-			    retrieved_party_nums.push(partyNum);
-			    new_data.push(row);
-			}
-		    }
-		    return new_data;
-		}
+        		    for (var i = 0; i<data.length; i++) {
+                                var row = data[i];
+                                var partyNum = row["PartyNumber"];
+        			if ($.inArray(partyNum, retrieved_party_nums) == -1) { // if this party number not seen before
+        			    retrieved_party_nums.push(partyNum);
+        			    new_data.push(row);
+        			}
+        		    }
+        		    return new_data;
+        		}
 
 
                 function parse_search_data(data){
                     console.log("Inside parse_search_data")
                     var unique_party_info = [true, "partyName", "partyNum", "imgSrc", "alt_text"];
                     var unique_candidate_info = [true, "candName", "candNum", "imgSrc"];
-		    
                     if (data.length == 0) {
                         unique_party_info[0] = false;
                         unique_candidate_info[0] = false;
@@ -287,61 +301,56 @@
                         unique_candidate_info[2] = data[0]["CandidateNumber"];
                         unique_candidate_info[3] = data[0]["ImageSrc"];
                         // TODO randomize data...
-			
-			//get distinct parties from the input data
-			var party_data = get_party_data(data);
-			if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search
-			    data = party_data;
-			}
-                        if (data.length <= 9) {
-                            for (var i = 0; i<data.length; i++)
-                            {
-                                var row = data[i];
-                                var partyName = row["PartyName"];
-                                var partyNum = row["PartyNumber"];
-				var partyImgSrc = row["PartyImageSrc"];
-                                var candName = row["CandidateName"];
-                                var candNum = row["CandidateNumber"];
-                                var imgSrc = row["ImageSrc"];
-                                var race = row["Race"];
-                                var imgHtml = "<img src='"+imgSrc+"'> </img>";
 
-				var html_str = "";
-				//TODO: I append party search in the search_result div, but probably we need to display somewhere else
-                                if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
-				    html_str = "<div class='col-xs-4 candidateVisible' " + 
+        			//get distinct parties from the input data
+        			if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search
+        			    data = get_party_data(data);
+        			}
+                    if (data.length <= 9) {
+                        // pi = [2,4,6,1]; 
+                        var html_str = "";
+                        for (var i = 0; i<data.length; i++)
+                        {
+                            //var row = data[pi[i]];
+                            var row = data[i];
+                            var partyName = row["PartyName"];
+                            var partyNum = row["PartyNumber"];
+                            var partyImgSrc = row["PartyImageSrc"];
+                            var candName = row["CandidateName"];
+                            var candNum = row["CandidateNumber"];
+                            var imgSrc = row["ImageSrc"];
+                            var race = row["Race"];
+                            var imgHtml = "<img src='"+imgSrc+"'> </img>";
+        				    //TODO: I append party search in the search_result div, but probably we need to display somewhere else
+                            if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
+				                html_str += "<div class='col-xs-4 candidateVisible' " + 
                                                     "id='search_result"+i.toString()+"'> " +
                                                     "<img src='" + partyImgSrc + "' style='width:100px;height:95px'>" + 
                                                     "<h3> " + partyName + "</h3>" +
                                                     "<h3 id='search_result_candNum"+i.toString()+"'>" + partyNum + "</h3>" +
                                                 "</div>";
-    	                        } else { // candidate search
-    	    			    html_str = "<div class='col-xs-4 candidateVisible' " + 
+                            } else { // candidate search
+    	    			        html_str += "<div class='col-xs-4 candidateVisible' " + 
                                                             "id='search_result"+i.toString()+"'> " +
                                                             "<img src='" + imgSrc + "' style='width:100px;height:95px'>" + 
                                                             "<h3> " + candName + "</h3>" +
                                                             "<h3 id='search_result_candNum"+i.toString()+"'>" + candNum + "</h3>" +
                                                         "</div>";
-                		}
-     				$("#search_results").append(html_str);
-                                
-
-
-                                
-
-                                if (partyName != unique_party_info[1]) {
-                                    unique_party_info[0] = false;
-                                    unique_candidate_info[0] = false;
-                                } if (candName != unique_candidate_info[1]) {
-                                    unique_candidate_info[0] = false;
-                                }
+                            }
+                            if (partyName != unique_party_info[1]) {
+                                unique_party_info[0] = false;
+                                unique_candidate_info[0] = false;
+                            } if (candName != unique_candidate_info[1]) {
+                                unique_candidate_info[0] = false;
                             }
                             stateModule.changeState("party_info", unique_party_info);
                             stateModule.changeState("candidate_info", unique_candidate_info);
                         } else {
-                            $("#search_results").append("<p>Too many results to display</p>")
+                            html_str = "<p>Too many results to display</p>"
+
                         }
                     }
+                    return html_str;
                 }
                 $("#keypadSearch").click(function(){
                     console.log("Clicked keypadSearch");
@@ -350,12 +359,9 @@
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var race = stateModule.getState("race_name");
                     var voterInput = getVoterInput(cursor_position);
-                    
-                    
-                    data = {"Race":race, "VoterInput":voterInput}; 
 
                     /*
-		    fake_data = new Array();
+                    fake_data = new Array();
                     for (var i = 0; i< 9; i++) {
                         fake_data.push({
                                 "PartyName": "Party" + (Math.floor(i/5)).toString(),
@@ -366,8 +372,10 @@
                         console.log(fake_data[i]);
                     }
                     console.log("fake_data" + fake_data.toString());
-                    parse_search_data(fake_data);
-		*/
+                    var html_str = parse_search_data(fake_data);
+                    $("#search_results").append(html_str);
+                    */
+                    data = {"Race":race, "VoterInput":voterInput}; 
                     $.ajax({
                         type: "POST",
                         url: '../controller/query_candidates.php',
@@ -375,8 +383,9 @@
                         dataType: 'JSON',
                         success: function(data)
                         {
-			    $("#search_results").html(""); //remove any data currently in search_results div
-                            parse_search_data(data);
+                            $("#search_results").html(""); //remove any data currently in search_results div
+                            var html_str = parse_search_data(data);
+                            $("#search_results").append(html_str);
                         },
                         error: function()
                         {
