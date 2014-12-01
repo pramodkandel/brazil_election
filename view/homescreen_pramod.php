@@ -36,8 +36,6 @@
                     // Party Info: whether party exists, party name, party num, party pic, party alt text
                     state["party_info"] = [false, "Angry party", "94", "angry.jpg", "Angry Candidate"];
                     // Candidate Info: whether candidate exists, candidate name, candidate num, candidate pic
-                    state["candidate_info"] = [false, "Mario", "94001", "candidate.jpg"];
-                    state["vote_warning_flag"] = false;
                     state["candidate_info"] = [false, "Mario", "94700", "candidate.jpg"];
                 var pub = {};// public object - returned at end of module
                 pub.changeState = function (state_key, new_state_value) {
@@ -53,17 +51,12 @@
             }());
             stateModule.changeState("cursor_position", "0");
             $(document).ready(function(){
-                udpate_view();
                 function number_press(num_str) {
                     var theState = stateModule.getStates();
-                    if (parseInt(theState["cursor_position"]) >= 5) { // if 5 digits already typed
-                        return
-                    }
                     $("#box".concat(theState["cursor_position"])).append(num_str);
                     stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
                     theState["events_stack"].push("keypadnumber"+num_str);
                     console.log(theState);
-                    udpate_data()
                     udpate_view();                    
                 }
                 $("#keypadnumber1").click(function(){
@@ -74,6 +67,9 @@
                 });
                 $("#keypadnumber3").click(function(){
                     number_press("3");
+                });
+                $("#keypadnumber4").click(function(){
+                    number_press("4");
                 });
                 $("#keypadnumber4").click(function(){
                     number_press("4");
@@ -104,41 +100,10 @@
                         stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])-1).toString());
                         cursor_position = stateModule.getState("cursor_position");
                         $("#box".concat(cursor_position)).html("");
-                    }
-                    if (startsWith(lastEvent, "setVoteWarningFlag")) {
-                        stateModule.changeState("vote_warning_flag", false);
                     } 
                     console.log(theState);
-                    udpate_data()
                     udpate_view();
                 });
-                $("#keypadConfirm").click(function(){
-                    var theState = stateModule.getStates();
-                    if (!theState["vote_warning_flag"]) {
-                        theState["events_stack"].push("setVoteWarningFlag");
-                        stateModule.changeState("vote_warning_flag", true);
-                        stateModule.changeState("events_stack", theState["events_stack"]);
-                        console.log(theState);
-                        udpate_view();
-                    } else {
-                        // TODO record vote in server
-                        $("#display").html("<h1>END</h1>" + "<p>TODO record vote in server</p>")
-                    }
-                    console.log(theState);
-                    udpate_view();
-                });
-                function udpate_data() {
-                    cursor_position = parseInt(stateModule.getState("cursor_position"));
-                    var voterInput = getVoterInput(cursor_position);
-                    // updating party selected data
-                    party_info_data = stateModule.getState("party_info");
-                    party_info_data[0] = startsWith(voterInput, "94");
-                    stateModule.changeState("party_info", party_info_data);
-                    // updating candidate selected data
-                    candidate_info_data = stateModule.getState("candidate_info");
-                    candidate_info_data[0] = startsWith(voterInput, "94001")
-                    stateModule.changeState("candidate_info", candidate_info_data);
-                }
                 function udpate_view() {
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var voterInput = getVoterInput(cursor_position);
@@ -146,7 +111,7 @@
                     if (parseInt(stateModule.getState("cursor_position")) >= 2) { // if party selected
                         var party_info = stateModule.getState("party_info");
                         if (party_info[0]) { // party exists
-                            var party_selected_str = "<div class='col-xs-2'>" + 
+                            var party_selected_str =    "<div class='col-xs-2'>" + 
                                                         "<img src= "+ party_info[3] + " alt= " + party_info[4] + "style='width:100px;height:100px'>" +
                                                     "</div>" + 
                                                     "<div class='col-xs-4'>" +
@@ -188,162 +153,76 @@
                     } else { // if candidate not selected
                         $("#candidate_selected").html("");
                     }
-                    // Displaying Vote Warning
-                    if (stateModule.getState("vote_warning_flag")){
-                        var party_info = stateModule.getState("party_info");
-                        var candidate_info = stateModule.getState("candidate_info");
-                        if (cursor_position == "") {
-                            $("#vote_warning").html("Current Selection: BLANK VOTE");
-                        }
-                        if (party_info[0]) { // party exists
-                            if (candidate_info[0]) { // candidate exists
-                                $("#vote_warning").html("Current Selection: PARTY AND CANDIDATE VOTE");
-                            } else {
-                                $("#vote_warning").html("Current Selection: PARTY VOTE");
-                            }
-                        } else {
-                            $("#vote_warning").html("Current Selection: NULL VOTE");
-                        }
-                    } else {
-                        $("#vote_warning").html("");
-                    }
-                    // TODO Possibly Shading Search Results
-                    for (var i = 0; i < 9; i++) {
-                        var candNum = $("#search_result_candNum"+i.toString()).text();
-                        if (startsWith(candNum, voterInput)) {
-                            $("#search_result"+i.toString()).removeClass("candidateHidden");
-                            $("#search_result"+i.toString()).addClass("candidateVisible");
-                        } else {
-                            $("#search_result"+i.toString()).removeClass("candidateVisible");
-                            $("#search_result"+i.toString()).addClass("candidateHidden");
-                        }
-                    }
+                    // Possibly Shading Search Results
+                    // TODO
                 }
-                function parse_search_data(data){
-                    console.log("Inside parse_search_data")
-                    var unique_party_info = [true, "partyName", "partyNum", "imgSrc", "alt_text"];
-                    var unique_candidate_info = [true, "candName", "candNum", "imgSrc"];
-                    if (data.length == 0) {
-                        unique_party_info[0] = false;
-                        unique_candidate_info[0] = false;
-                    } else {
-                        console.log("Inside interesting part of parse_search_data")
-                        unique_party_info[1] = data[0]["PartyName"];
-                        unique_party_info[2] = data[0]["PartyNumber"];
-                        unique_party_info[3] = data[0]["ImageSrc"];
-                        unique_candidate_info[1] = data[0]["CandidateName"];
-                        unique_candidate_info[2] = data[0]["CandidateNumber"];
-                        unique_candidate_info[3] = data[0]["ImageSrc"];
-                        // TODO randomize data...
-                        if (data.length <= 9) {
-                            for (var i = 0; i<data.length; i++)
-                            {
-                                var row = data[i];
-                                var partyName = row["PartyName"];
-                                var partyNum = row["PartyNumber"];
-                                var candName = row["CandidateName"];
-                                var candNum = row["CandidateNumber"];
-                                var imgSrc = row["ImageSrc"];
-                                var race = row["Race"];
-                                var imgHtml = "<img src='"+imgSrc+"'> </img>";
-                                var html_candidate_str = "<div class='col-xs-4 candidateVisible' " + 
-                                                            "id='search_result"+i.toString()+"'> " +
-                                                            "<img src='" + imgSrc + "' style='width:100px;height:95px'>" + 
-                                                            "<h3> " + candName + "</h3>" +
-                                                            "<h3 id='search_result_candNum"+i.toString()+"'>" + candNum + "</h3>" +
-                                                        "</div>";
-                                $("#search_results").append(html_candidate_str);
-                                if (partyName != unique_party_info[1]) {
-                                    unique_party_info[0] = false;
-                                    unique_candidate_info[0] = false;
-                                } if (candName != unique_candidate_info[1]) {
-                                    unique_candidate_info[0] = false;
-                                }
-                            }
-                            stateModule.changeState("party_info", unique_party_info);
-                            stateModule.changeState("candidate_info", unique_candidate_info);
-                        } else {
-                            $("#search_results").append("<p>Too many results to display</p>")
-                        }
-                    }
-                }
+
+
+
                 $("#keypadSearch").click(function(){
                     console.log("Clicked keypadSearch");
-                    //$("#retrieved").html("<img src='../images/loading.gif'>");
+
+		    $("#retrieved").html("<img src='../images/loading.gif'>");
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var race = stateModule.getState("race_name");
                     var voterInput = getVoterInput(cursor_position);
-                    var retrievedPartyNums = new Array();
-                    //this is all the data to send to php
-                    $("#search_results").html("<p>DEBUGGING: This is for the race '" + race + "' and voter input '"+voterInput +"'. If you want to query for other things, open view/candidateInfo.php and change the variables 'race' and 'voterInput'. To add rows in database, go to https://sql.scripts.mit.edu/phpMyAdmin/ and type 'pramod' as both username and password and add to database 'pramod+friends' in table 'candidates'.</p>");
-                    // TODO remove debugging message above and replace by "" to clear search_results box
+
+		    var retrievedPartyNums = new Array();
+
                     data = {"Race":race, "VoterInput":voterInput}; 
-                    fake_data = new Array();
-                    for (var i = 0; i< 9; i++) {
-                        fake_data.push({
-                                "PartyName": "Party" + (Math.floor(i/5)).toString(),
-                                "PartyNumber": "9" + (Math.floor(i/5)).toString(),
-                                "CandidateName": "Candidate" + i.toString(),
-                                "CandidateNumber": "9" + (Math.floor(i/5)).toString() + "00" + i.toString(),
-                                "ImageSrc" : "candidate.jpg"});
-                        console.log(fake_data[i]);
-                    }
-                    console.log("fake_data" + fake_data.toString());
-                    parse_search_data(fake_data);
-                    /* $.ajax({
+                    $.ajax({
                         type: "POST",
                         url: '../controller/query_candidates.php',
                         data: data,
                         dataType: 'JSON',
                         success: function(data)
                         {
-                            parse_search_data(data);
+			    //remove the loading gif or anything that was in retrieved div
+			    $("#retrieved").html("");
+                            for (var i = 0; i<data.length; i++)
+                            {
+                                var row = data[i];
+                                var partyName = row["PartyName"];
+                                var partyNum = row["PartyNumber"];
+                                var partyImgSrc = row["PartyImageSrc"];
+                                var candName = row["CandidateName"];
+                                var candNum = row["CandidateNumber"];
+                                var candImgSrc = row["ImageSrc"];
+                                var race = row["Race"];
+
+                                var candImgHtml = "<img style='width:100px;height:95px' src='"+candImgSrc+"'> </img>";
+                                var partyImgHtml = "<img src='"+partyImgSrc+"'></img>";
+
+                                if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
+				    if ($.inArray(partyNum, retrievedPartyNums) == -1){
+				    	retrievedPartyNums.push(partyNum);
+					//TODO: Delete the following line and put things in the overall framework Marco has developed. Maybe Marco should do this. Same with else statement
+					$("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+"</br>"+partyImgHtml + "</br></br>");
+				    }
+				    
+
+	                        } else { // candidate search
+	    			    $("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+", Candidate Name: "+candName+", Candidate Number: "+candNum+"</br>"+candImgHtml + "</br></br>");
+            		        }
+ 
+                            }
                         },
                         error: function()
                         {
-                            $("#search_results").append("ERROR");
+                            $("#retrieved").append("ERROR SEARCHING..");
                         }
-                    }); */
-                    /*
-    			    //remove the loading gif or anything that was in retrieved div
-    			    $("#retrieved").html("");
-                                for (var i = 0; i<data.length; i++)
-                                {
-                                    var row = data[i];
-                                    var partyName = row["PartyName"];
-                                    var partyNum = row["PartyNumber"];
-                                    var partyImgSrc = row["PartyImageSrc"];
-                                    var candName = row["CandidateName"];
-                                    var candNum = row["CandidateNumber"];
-                                    var candImgSrc = row["ImageSrc"];
-                                    var race = row["Race"];
+                    });
 
-                                    var candImgHtml = "<img style='width:100px;height:95px' src='"+candImgSrc+"'> </img>";
-                                    var partyImgHtml = "<img src='"+partyImgSrc+"'></img>";
 
-                                    if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
-    				    if ($.inArray(partyNum, retrievedPartyNums) == -1){
-    				    	retrievedPartyNums.push(partyNum);
-    					//TODO: Delete the following line and put things in the overall framework Marco has developed. Maybe Marco should do this. Same with else statement
-    					$("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+"</br>"+partyImgHtml + "</br></br>");
-    				    }
-    				    
 
-    	                        } else { // candidate search
-    	    			    $("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+", Candidate Name: "+candName+", Candidate Number: "+candNum+"</br>"+candImgHtml + "</br></br>");
-                		        }
-     
-                                }
-                            },
-                            error: function()
-                            {
-                                $("#retrieved").append("ERROR SEARCHING..");
-                            }
-                        });
-                        */
                     console.log("voterInput" + voterInput);
+
+
                 });
             });
+
+
+
             function startsWith(str, prefix) {
                 return str.lastIndexOf(prefix, 0) === 0;
             }
@@ -362,9 +241,9 @@
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
                 <div class="col-xs-12" style="max-width:680px;">
-                    <div class="container" id="display">
+                    <div class="container">
                         <div class="page-header">
-                            <h1 id="race_name">Race Name</h1>
+                            <h1>Race Name</h1>
                             <div class="row">
                                 <div class="col-xs-2">
                                     <div class="panel panel-default">
@@ -408,19 +287,42 @@
                             <div class="row" id="candidate_selected">
                                 <!-- only display if single candidate option-->
                             </div>
-                            <div class="row">
-                                <p id="vote_warning"></p>
-                                <p class="text-muted">
-                                    Press Confirm to cast vote <br> 
-                                    Press Search to filter only the relevant result
-                                </p>
-                            </div>
                             <div></div>
                         </div>
 
-                        <div class="row" style="border:solid; border-width:2px" id="search_results">
-                            <!--  only display if search button pressed, check State-->
-                        </div>
+                        <div class="row" style="border:solid; border-width:2px">
+                            <div id="retrieved"> </div>
+                            <!-- TODO only display if search button pressed, check State-->
+                            <div class="col-xs-4" id="candidateHidden">
+                                <img src="candidate.jpg" style="width:100px;height:95px">
+                                <h3> Party name</h3>
+                                <h3> Candidate number</h3>
+                            </div>
+                            <div class="col-xs-4" id="candidateVisible">
+                                <img src="candidate.jpg" style="width:100px;height:95px">
+                                <h3> Candidate name</h3>
+                                <h3> Candidate number</h3>
+                            </div>
+                            <div class="col-xs-4" id="candidateHidden">
+                                <img src="candidate.jpg" style="width:100px;height:95px;">
+                                <h3> Candidate name</h3>
+                                <h3> Candidate number</h3>
+                            </div>
+                            <div class="col-xs-4" id="candidateVisible">
+                                <img src="candidate.jpg" style="width:100px;height:95px;">
+                                <h3> Candidate name</h3>
+                                <h3> Candidate number</h3>
+                            </div>
+                            <div class="col-xs-4" id="candidateHidden">
+                                <img src="candidate.jpg"  style="width:100px;height:95px;">
+                                <h3> Candidate name</h3>
+                                <h3> Candidate number</h3>
+                            </div>
+                            <div class="col-xs-4" id="candidateHidden">
+                                <img src="candidate.jpg"  style="width:100px;height:95px;">
+                                <h3> Candidate name</h3>
+                                <h3> Candidate number</h3>
+                            </div>
                     </div>
                 </div> 
             </div> 
@@ -455,7 +357,7 @@
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber7">7</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber8">8</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber9">9</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber8">9</button>
                         </div>
                     </div>
                 </div>
@@ -480,6 +382,13 @@
             </div>
         </div>
      </div>
+     <div class="row" style="margin-left:1px">
+        <footer class="footer" style="width:400px;">
+            <p class="text-muted">
+                Press Confirm to cast vote <br> Press Search to filter only the relevant result</br>
+            </p>
+        </footer>
+    </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="../bootstrap-3.3.1/assets/js/ie10-viewport-bug-workaround.js"></script>
 
