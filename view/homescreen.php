@@ -57,8 +57,9 @@
                 function number_press(num_str) {
                     var theState = stateModule.getStates();
                     if (parseInt(theState["cursor_position"]) >= 5) { // if 5 digits already typed
-                        return
+                        return;
                     }
+				
                     $("#box".concat(theState["cursor_position"])).append(num_str);
                     stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
                     theState["events_stack"].push("keypadnumber"+num_str);
@@ -149,7 +150,6 @@
                         }); 
 
 
-                        //$("#display").html("<h1>END</h1>" + "<p>TODO record vote in server</p>")
                     }
                     console.log(theState);
                     udpate_view();
@@ -164,9 +164,11 @@
                         url: '../controller/query_candidates.php',
                         data: data,
                         dataType: 'JSON',
+						async: false,
                         success: function(data)
                         {
                             parse_search_data(data);
+							udpate_view();
                         },
                         error: function()
                         {
@@ -177,6 +179,8 @@
                     var voterInput = getVoterInput(cursor_position);
                     // updating party selected data
                     party_info_data = stateModule.getState("party_info");
+					console.log(voterInput);
+					console.log("Party Info: " +party_info_data);
                     party_info_data[0] = startsWith(voterInput, party_info_data[2]);
                     stateModule.changeState("party_info", party_info_data);
                     // updating candidate selected data
@@ -192,7 +196,7 @@
                         var party_info = stateModule.getState("party_info");
                         if (party_info[0]) { // party exists
                             var party_selected_str = "<div class='col-xs-2'>" + 
-                                                        "<img src= "+ party_info[3] + " alt= " + party_info[4] + "style='width:100px;height:100px'>" +
+                                                        "<img src= "+ party_info[3] + " alt= '" + party_info[4] + "'style='width:100px;height:100px'>" +
                                                     "</div>" + 
                                                     "<div class='col-xs-4'>" +
                                                         "<h3> Party name: " + party_info[1] + " </h3>" + 
@@ -252,7 +256,6 @@
                     } else {
                         $("#vote_warning").html("");
                     }
-                    // TODO Possibly Shading Search Results
                     for (var i = 0; i < 9; i++) {
                         var candNum = $("#search_result_candNum"+i.toString()).text();
                         if (startsWith(candNum, voterInput)) {
@@ -284,6 +287,27 @@
         		}
 
 
+				//taken from stackoverflow
+				function shuffle(array) {
+					var currentIndex = array.length, temporaryValue, randomIndex ;
+
+					  // While there remain elements to shuffle...
+					while (0 !== currentIndex) {
+
+						// Pick a remaining element...
+						randomIndex = Math.floor(Math.random() * currentIndex);
+						currentIndex -= 1;
+
+						// And swap it with the current element.
+						temporaryValue = array[currentIndex];
+						array[currentIndex] = array[randomIndex];
+						array[randomIndex] = temporaryValue;
+					}
+
+					return array;
+				}
+				
+				
                 function parse_search_data(data){
                     console.log("Inside parse_search_data")
 					var html_str = "";
@@ -307,13 +331,20 @@
 						if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search
 							data = get_party_data(data);
 						}
+						
+						//create index array from 0 to data length-1 to shuffle
+						var index_array = new Array();
+						for (var i=0; i<data.length; i++){
+							index_array.push(i);
+						}
+						
 						if (data.length <= 9) {
-							// pi = [2,4,6,1]; 
+							pi = shuffle(index_array);
 							html_str = "";
 							for (var i = 0; i<data.length; i++)
 							{
-								//var row = data[pi[i]];
-								var row = data[i];
+								var row = data[pi[i]];
+								//var row = data[i];
 								var partyName = row["PartyName"];
 								var partyNum = row["PartyNumber"];
 								var partyImgSrc = row["PartyImageSrc"];
@@ -322,7 +353,6 @@
 								var imgSrc = row["ImageSrc"];
 								var race = row["Race"];
 								var imgHtml = "<img src='"+imgSrc+"'> </img>";
-								//TODO: I append party search in the search_result div, but probably we need to display somewhere else
 								if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
 									html_str += "<div class='col-xs-4 candidateVisible' " + 
 														"id='search_result"+i.toString()+"'> " +
@@ -383,6 +413,7 @@
                         url: '../controller/query_candidates.php',
                         data: data,
                         dataType: 'JSON',
+						async:false,
                         success: function(data)
                         {
                             $("#search_results").html(""); //remove any data currently in search_results div
