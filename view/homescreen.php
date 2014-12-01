@@ -33,6 +33,11 @@
                     state["events_stack"] = new Array();
                     state["vote_input"] = "";
                     state["race_name"] = "Ice Cream";
+                    // Party Info: whether party exists, party name, party num, party pic, party alt text
+                    state["party_info"] = [false, "Angry party", "94", "angry.jpg", "Angry Candidate"];
+                    // Candidate Info: whether candidate exists, candidate name, candidate num, candidate pic
+                    state["candidate_info"] = [false, "Mario", "94001", "candidate.jpg"];
+                    state["vote_warning_flag"] = false;
                 var pub = {};// public object - returned at end of module
                 pub.changeState = function (state_key, new_state_value) {
                     state[state_key] = new_state_value;
@@ -47,99 +52,169 @@
             }());
             stateModule.changeState("cursor_position", "0");
             $(document).ready(function(){
-                $("#keypad1").click(function(){
+                udpate_view();
+                function number_press(num_str) {
                     var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("1");
+                    if (parseInt(theState["cursor_position"]) >= 5) { // if 5 digits already typed
+                        return
+                    }
+                    $("#box".concat(theState["cursor_position"])).append(num_str);
                     stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad1");
+                    theState["events_stack"].push("keypadnumber"+num_str);
                     console.log(theState);
+                    udpate_data()
+                    udpate_view();                    
+                }
+                $("#keypadnumber1").click(function(){
+                    number_press("1");
                 });
-                $("#keypad2").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("2");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad2");
-                    console.log(theState);
+                $("#keypadnumber2").click(function(){
+                    number_press("2");
                 });
-                $("#keypad3").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("3");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad3");
-                    console.log(theState);
+                $("#keypadnumber3").click(function(){
+                    number_press("3");
                 });
-                $("#keypad4").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("4");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad4");
-                    console.log(theState);
+                $("#keypadnumber4").click(function(){
+                    number_press("4");
                 });
-                $("#keypad5").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("5");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad5");
-                    console.log(theState);
+                $("#keypadnumber5").click(function(){
+                    number_press("5");
                 });
-                $("#keypad6").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("6");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad6");
-                    console.log(theState);
+                $("#keypadnumber6").click(function(){
+                    number_press("6");
                 });
-                $("#keypad7").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("7");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad7");
-                    console.log(theState);
+                $("#keypadnumber7").click(function(){
+                    number_press("7");
                 });
-                $("#keypad8").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("8");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad8");
-                    console.log(theState);
+                $("#keypadnumber8").click(function(){
+                    number_press("8");
                 });
-                $("#keypad9").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("9");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad9");
-                    console.log(theState);
+                $("#keypadnumber9").click(function(){
+                    number_press("9");
                 });
-<<<<<<< HEAD
-                $("#keypad0").click(function(){
-                    var theState = stateModule.getStates();
-                    $("#box".concat(theState["cursor_position"])).append("0");
-                    stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
-                    theState["events_stack"].push("number"+"#keypad0");
-                    console.log(theState);
+                $("#keypadnumber0").click(function(){
+                    number_press("0");
                 });
-=======
->>>>>>> 3fa544ffd95e113322e95c2b59c80b5ecbb783ef
                 $("#keypadUndo").click(function(){
                     var theState = stateModule.getStates();
                     var lastEvent = theState["events_stack"].pop();  
                     stateModule.changeState("events_stack", theState["events_stack"]);
-                    if (startsWith(lastEvent, "number")) {
+                    if (startsWith(lastEvent, "keypadnumber")) {
                         stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])-1).toString());
                         cursor_position = stateModule.getState("cursor_position");
                         $("#box".concat(cursor_position)).html("");
+                    }
+                    if (startsWith(lastEvent, "setVoteWarningFlag")) {
+                        stateModule.changeState("vote_warning_flag", false);
                     } 
                     console.log(theState);
+                    udpate_data()
+                    udpate_view();
                 });
+                $("#keypadConfirm").click(function(){
+                    var theState = stateModule.getStates();
+                    if (!theState["vote_warning_flag"]) {
+                        theState["events_stack"].push("setVoteWarningFlag");
+                        stateModule.changeState("vote_warning_flag", true);
+                        stateModule.changeState("events_stack", theState["events_stack"]);
+                        console.log(theState);
+                        udpate_view();
+                    } else {
+                        // TODO record vote in server
+                        $("#display").html("<h1>END</h1>" + "<p>TODO record vote in server</p>")
+                    }
+                    console.log(theState);
+                    udpate_view();
+                });
+                function udpate_data() {
+                    cursor_position = parseInt(stateModule.getState("cursor_position"));
+                    var voterInput = getVoterInput(cursor_position);
+                    // updating party selected data
+                    party_info_data = stateModule.getState("party_info");
+                    party_info_data[0] = startsWith(voterInput, "94");
+                    stateModule.changeState("party_info", party_info_data);
+                    // updating candidate selected data
+                    candidate_info_data = stateModule.getState("candidate_info");
+                    candidate_info_data[0] = startsWith(voterInput, "94001")
+                    stateModule.changeState("candidate_info", candidate_info_data);
+                }
+                function udpate_view() {
+                    cursor_position = parseInt(stateModule.getState("cursor_position"));
+                    var voterInput = getVoterInput(cursor_position);
+                    race_name = stateModule.getState("race_name");
+                    $("#race_name").html(race_name);
+                    // Displaying Party Info
+                    if (parseInt(stateModule.getState("cursor_position")) >= 2) { // if party selected
+                        var party_info = stateModule.getState("party_info");
+                        if (party_info[0]) { // party exists
+                            var party_selected_str =    "<div class='col-xs-2'>" + 
+                                                        "<img src= "+ party_info[3] + " alt= " + party_info[4] + "style='width:100px;height:100px'>" +
+                                                    "</div>" + 
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Party name: " + party_info[1] + " </h3>" + 
+                                                    "</div>" +
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Party number: " + party_info[2] + "</h3>" +
+                                                    "</div>";
+                            $("#party_selected").html(party_selected_str);
+                        } else { // party does not exist
+                            var no_party_str = "<div class='alert alert-danger' role='alert'>" + 
+                                                    "No PARTY with this number!" + 
+                                                "</div>";
+                            $("#party_selected").html(no_party_str);
+                        }
+                    } else { // if party not selected
+                        $("#party_selected").html("");
+                    }
+                    // Displaying Candidates Info
+                    if (parseInt(stateModule.getState("cursor_position")) == 5) { // if candidate selected
+                        var candidate_info = stateModule.getState("candidate_info");
+                        if (candidate_info[0]) { // candidate exists
+                            var candidate_selected_str =    "<div class='col-xs-2'>" + 
+                                                        "<img src= "+ candidate_info[3] + " style='width:100px;height:100px'>" +
+                                                    "</div>" + 
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Candidate name: " + candidate_info[1] + " </h3>" + 
+                                                    "</div>" +
+                                                    "<div class='col-xs-4'>" +
+                                                        "<h3> Candidate number: " + candidate_info[2] + "</h3>" +
+                                                    "</div>";
+                            $("#candidate_selected").html(candidate_selected_str);
+                        } else { // candidate does not exist
+                            var no_candidate_str = "<div class='alert alert-danger' role='alert'>" + 
+                                                    "No CANDIDATE with this number!" + 
+                                                "</div>";
+                            $("#candidate_selected").html(no_candidate_str);
+                        }
+                    } else { // if candidate not selected
+                        $("#candidate_selected").html("");
+                    }
+                    // Displaying Vote Warning
+                    if (stateModule.getState("vote_warning_flag")){
+                        var party_info = stateModule.getState("party_info");
+                        var candidate_info = stateModule.getState("candidate_info");
+                        if (cursor_position == "") {
+                            $("#vote_warning").html("Current Selection: BLANK VOTE");
+                        }
+                        if (party_info[0]) { // party exists
+                            if (candidate_info[0]) { // candidate exists
+                                $("#vote_warning").html("Current Selection: PARTY AND CANDIDATE VOTE");
+                            } else {
+                                $("#vote_warning").html("Current Selection: PARTY VOTE");
+                            }
+                        } else {
+                            $("#vote_warning").html("Current Selection: NULL VOTE");
+                        }
+                    } else {
+                        $("#vote_warning").html("");
+                    }
+                    // TODO Possibly Shading Search Results
+                }
                 $("#keypadSearch").click(function(){
                     console.log("Clicked keypadSearch");
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var race = stateModule.getState("race_name");
-                    var voterInput = "";
-                    for (i = 0; i < cursor_position; i++) {
-                        voterInput += $("#box".concat(i.toString())).text();
-                    }
-                    voterInput = voterInput.replace(/\D/g,'');  // trim away any non digits
+                    var voterInput = getVoterInput(cursor_position);
                     console.log("voterInput" + voterInput);
                     if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
 
@@ -156,19 +231,38 @@
                         dataType: 'JSON',
                         success: function(data)
                         {
-                            for (var i = 0; i<data.length; i++)
-                            {
-                                var row = data[i];
-                                var partyName = row["PartyName"];
-                                var partyNum = row["PartyNumber"];
-                                var candName = row["CandidateName"];
-                                var candNum = row["CandidateNumber"];
-                                var imgSrc = row["ImageSrc"];
-                                var race = row["Race"];
-
-                                var imgHtml = "<img src='"+imgSrc+"'> </img>";
-
-                                $("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+", Candidate Name: "+candName+", Candidate Number: "+candNum+"</br>"+imgHtml + "</br></br>");
+                            var unique_party = true;
+                            var unique_party_info = "";
+                            var unique_candidate = true;
+                            var unique_candida_info = "";
+                            if (data.length == 0) {
+                                unique_party = false;
+                                unique_candidate = false;
+                            } else {
+                                unique_party_info = data[0]["PartyName"];
+                                unique_candida_info = data[0]["PartyName"];
+                                for (var i = 0; i<data.length; i++)
+                                {
+                                    var row = data[i];
+                                    var partyName = row["PartyName"];
+                                    var partyNum = row["PartyNumber"];
+                                    var candName = row["CandidateName"];
+                                    var candNum = row["CandidateNumber"];
+                                    var imgSrc = row["ImageSrc"];
+                                    var race = row["Race"];
+                                    var imgHtml = "<img src='"+imgSrc+"'> </img>";
+                                    $("#retrieved").append("Race: "+race+", Party Name: "+partyName+ ", Party Number: "+partyNum+", Candidate Name: "+candName+", Candidate Number: "+candNum+"</br>"+imgHtml + "</br></br>");
+                                    if (partyName != unique_party_info) {
+                                        unique_party = false;
+                                        unique_candidate = false;
+                                    } if (candName != unique_candida_info) {
+                                        unique_candidate = false;
+                                    }
+                                }
+                                party_info = [unique_party, partyName, partyNum, imgSrc, "alt_text"];
+                                candidate_info = [unique_candidate, candName, candNum, imgSrc];
+                                stateModule.changeState("party_info", party_info);
+                                stateModule.changeState("candidate_info", candidate_info);
                             }
                         },
                         error: function()
@@ -181,17 +275,24 @@
             function startsWith(str, prefix) {
                 return str.lastIndexOf(prefix, 0) === 0;
             }
+            function getVoterInput(cursor_position) {
+                var voterInput = "";
+                for (i = 0; i < cursor_position; i++) {
+                    voterInput += $("#box".concat(i.toString())).text();
+                }
+                voterInput = voterInput.replace(/\D/g,'');  // trim away any non digits
+                return voterInput;
+            }
         </script>
     </head>
     <body>
-<<<<<<< HEAD
         <!-- Begin page content -->
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
                 <div class="col-xs-12" style="max-width:680px;">
-                    <div class="container">
+                    <div class="container" id="display">
                         <div class="page-header">
-                            <h1>Race Name</h1>
+                            <h1 id="race_name">Race Name</h1>
                             <div class="row">
                                 <div class="col-xs-2">
                                     <div class="panel panel-default">
@@ -229,13 +330,18 @@
                                     </div>
                                 </div>
                             </div>
+                            <div class="row" id="party_selected">
+                                <!-- only display if single party option-->
+                            </div>
+                            <div class="row" id="candidate_selected">
+                                <!-- only display if single candidate option-->
+                            </div>
                             <div class="row">
-                                <!-- TODO only display if single party option, check State-->
-                                <div class="col-xs-2">
-                                    <img src="angry.jpg" alt="Angry Candidate" style="width:100px;height:100px">
-                                </div>
-                                <div class="col-xs-4"><h3> Party name: Angry party</h3></div>
-                                <div class="col-xs-4"><h3> Party number: 93</h3></div>
+                                <p id="vote_warning"></p>
+                                <p class="text-muted">
+                                    Press Confirm to cast vote <br> 
+                                    Press Search to filter only the relevant result
+                                </p>
                             </div>
                             <div></div>
                         </div>
@@ -275,12 +381,6 @@
                                 <h3> Candidate number</h3>
                             </div>
                         </div>
-                        <footer class="footer">
-                            <p class="text-muted">
-                                Press Confirm to cast vote <br> Press Search to filter only the relevant result</br>
-                            </p>
-                        </footer>
-
                     </div>
                 </div> 
             </div>
@@ -293,27 +393,27 @@
                 <div class="row" style="height:75px">
                     <div class="col-xs-3" style="width:320px">  
                         <div class="btn-group-horizontal" role="group">
-                            <button type="button" class="btn btn-default btn-lg" id="keypad1">1</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad2">2</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad3">3</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber1">1</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber2">2</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber3">3</button>
                         </div>
                     </div>
                 </div>
                 <div class="row" style="height:75px">
                     <div class="col-xs-3" style="width:320px">
                         <div class="btn-group-horizontal" role="group">
-                            <button type="button" class="btn btn-default btn-lg" id="keypad4">4</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad5">5</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad6">6</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber4">4</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber5">5</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber6">6</button>
                         </div>
                     </div>
                 </div>
                 <div class="row" style="height:75px">
                     <div class="col-xs-3" style="width:320px">
                         <div class="btn-group-horizontal" role="group">
-                            <button type="button" class="btn btn-default btn-lg" id="keypad7">7</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad8">8</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad9">9</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber7">7</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber8">8</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber9">9</button>
                         </div>
                     </div>
                 </div>
@@ -321,7 +421,7 @@
                     <div class="col-xs-3" style="width:320px">
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypad*">*</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypad0">0</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber0">0</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypad#">#</button>
                         </div>
                     </div>
@@ -336,120 +436,6 @@
                     </div>
                 </div>
             </div>
-=======
-        <button id = "cand_btn">Get Candidates</button>
-        <div id="retrieved">
-        </div>
-        <!-- Begin page content -->
-        <div class="container" style="width:1000px;">
-        <div class="row" style="max-width:1000px;">
-        <div class="col-xs-12" style="max-width:680px;">
-        <div class="container">
-          <div class="page-header">
-            <h1>Race Name</h1>
-            <div class="row">
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box0">  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box1">  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box2" >  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box3">  </p>
-            </div>
-            </div>
-            </div>
-            <div class="col-xs-2">
-            <div class="panel panel-default">
-            <div class="panel-body">
-            <p id="box4">  </p>
-            </div>
-            </div>
-            </div>
-            </div>
-            <div>
-            </div>
-        
-          </div>
-          <div class="row">
-          <div class="col-xs-4" style="opacity:.2">
-          </div>
-          <div class="row">
-          <div class="col-xs-4" style="opacity:.2">
-          </div>
-          </div>
-        
-        </div>
-        
-        </div>
-        </div>
-        <footer class="footer">
-            <p class="text-muted">
-            Press Confirm to cast vote <br> Press Search to filter only the relevant result</br></p>
-        </footer>
-        <div class="col-xs-4" style="width:320px;height:400px">
-
-        <div class="row" style="width:320px;height:220px">
-        <div class="col-xs-1"> 
-        </div>
-        <div class="col-xs-1"> 
-        </div>
-        <div class="col-xs-1"> 
-        </div>
-        </div>
-         <div class="row" style="height:75px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" id="keypad1">1</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad2">2</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad3">3</button>
-      </div>
-        </div>
-        </div>
-         <div class="row" style="height:75px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" id="keypad4">4</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad5">5</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad6">6</button>
-      </div>
-        </div>
-        </div>
-         <div class="row" style="height:75px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" id="keypad7">7</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad8">8</button>
-      <button type="button" class="btn btn-default btn-lg" id="keypad9">9</button>
-      </div>
-        </div>
-        
-        </div>
-        <div class="row" style="height:50px">
-        <div class="col-xs-3" style="width:320px">  <div class="btn-group-horizontal" role="group">
-      <button type="button" class="btn btn-default btn-lg" style="background-color:blue; color:white" id="keypadSearch">Search</button>
-      <button type="button" class="btn btn-default btn-lg" style="background-color:orange; color:black" id="keypadUndo">Undo</button>
-      <button type="button" class="btn btn-default btn-lg" style="background-color:green; color:white"  id="keypadConfirm">Confirm</button>
-      </div>
-        </div>
-        </div>
-        </div>
-        </div>
->>>>>>> 3fa544ffd95e113322e95c2b59c80b5ecbb783ef
         </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="../bootstrap-3.3.1/assets/js/ie10-viewport-bug-workaround.js"></script>
