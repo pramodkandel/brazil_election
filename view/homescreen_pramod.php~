@@ -36,8 +36,6 @@
                     // Party Info: whether party exists, party name, party num, party pic, party alt text
                     state["party_info"] = [false, "Angry party", "94", "angry.jpg", "Angry Candidate"];
                     // Candidate Info: whether candidate exists, candidate name, candidate num, candidate pic
-                    state["candidate_info"] = [false, "Mario", "94001", "candidate.jpg"];
-                    state["vote_warning_flag"] = false;
                     state["candidate_info"] = [false, "Mario", "94700", "candidate.jpg"];
                 var pub = {};// public object - returned at end of module
                 pub.changeState = function (state_key, new_state_value) {
@@ -53,17 +51,12 @@
             }());
             stateModule.changeState("cursor_position", "0");
             $(document).ready(function(){
-                udpate_view();
                 function number_press(num_str) {
                     var theState = stateModule.getStates();
-                    if (parseInt(theState["cursor_position"]) >= 5) { // if 5 digits already typed
-                        return
-                    }
                     $("#box".concat(theState["cursor_position"])).append(num_str);
                     stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])+1).toString());
                     theState["events_stack"].push("keypadnumber"+num_str);
                     console.log(theState);
-                    udpate_data()
                     udpate_view();                    
                 }
                 $("#keypadnumber1").click(function(){
@@ -74,6 +67,9 @@
                 });
                 $("#keypadnumber3").click(function(){
                     number_press("3");
+                });
+                $("#keypadnumber4").click(function(){
+                    number_press("4");
                 });
                 $("#keypadnumber4").click(function(){
                     number_press("4");
@@ -104,41 +100,10 @@
                         stateModule.changeState("cursor_position", (parseInt(theState["cursor_position"])-1).toString());
                         cursor_position = stateModule.getState("cursor_position");
                         $("#box".concat(cursor_position)).html("");
-                    }
-                    if (startsWith(lastEvent, "setVoteWarningFlag")) {
-                        stateModule.changeState("vote_warning_flag", false);
                     } 
                     console.log(theState);
-                    udpate_data()
                     udpate_view();
                 });
-                $("#keypadConfirm").click(function(){
-                    var theState = stateModule.getStates();
-                    if (!theState["vote_warning_flag"]) {
-                        theState["events_stack"].push("setVoteWarningFlag");
-                        stateModule.changeState("vote_warning_flag", true);
-                        stateModule.changeState("events_stack", theState["events_stack"]);
-                        console.log(theState);
-                        udpate_view();
-                    } else {
-                        // TODO record vote in server
-                        $("#display").html("<h1>END</h1>" + "<p>TODO record vote in server</p>")
-                    }
-                    console.log(theState);
-                    udpate_view();
-                });
-                function udpate_data() {
-                    cursor_position = parseInt(stateModule.getState("cursor_position"));
-                    var voterInput = getVoterInput(cursor_position);
-                    // updating party selected data
-                    party_info_data = stateModule.getState("party_info");
-                    party_info_data[0] = startsWith(voterInput, "94");
-                    stateModule.changeState("party_info", party_info_data);
-                    // updating candidate selected data
-                    candidate_info_data = stateModule.getState("candidate_info");
-                    candidate_info_data[0] = startsWith(voterInput, "94001")
-                    stateModule.changeState("candidate_info", candidate_info_data);
-                }
                 function udpate_view() {
                     cursor_position = parseInt(stateModule.getState("cursor_position"));
                     var voterInput = getVoterInput(cursor_position);
@@ -188,30 +153,9 @@
                     } else { // if candidate not selected
                         $("#candidate_selected").html("");
                     }
-                    // Displaying Vote Warning
-                    if (stateModule.getState("vote_warning_flag")){
-                        var party_info = stateModule.getState("party_info");
-                        var candidate_info = stateModule.getState("candidate_info");
-                        if (cursor_position == "") {
-                            $("#vote_warning").html("Current Selection: BLANK VOTE");
-                        }
-                        if (party_info[0]) { // party exists
-                            if (candidate_info[0]) { // candidate exists
-                                $("#vote_warning").html("Current Selection: PARTY AND CANDIDATE VOTE");
-                            } else {
-                                $("#vote_warning").html("Current Selection: PARTY VOTE");
-                            }
-                        } else {
-                            $("#vote_warning").html("Current Selection: NULL VOTE");
-                        }
-                    } else {
-                        $("#vote_warning").html("");
-                    }
-                    // TODO Possibly Shading Search Results
+                    // Possibly Shading Search Results
+                    // TODO
                 }
- 
-
-
 
 
 
@@ -279,7 +223,6 @@
 
 
 
-
             function startsWith(str, prefix) {
                 return str.lastIndexOf(prefix, 0) === 0;
             }
@@ -298,9 +241,9 @@
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
                 <div class="col-xs-12" style="max-width:680px;">
-                    <div class="container" id="display">
+                    <div class="container">
                         <div class="page-header">
-                            <h1 id="race_name">Race Name</h1>
+                            <h1>Race Name</h1>
                             <div class="row">
                                 <div class="col-xs-2">
                                     <div class="panel panel-default">
@@ -344,13 +287,6 @@
                             <div class="row" id="candidate_selected">
                                 <!-- only display if single candidate option-->
                             </div>
-                            <div class="row">
-                                <p id="vote_warning"></p>
-                                <p class="text-muted">
-                                    Press Confirm to cast vote <br> 
-                                    Press Search to filter only the relevant result
-                                </p>
-                            </div>
                             <div></div>
                         </div>
 
@@ -387,7 +323,6 @@
                                 <h3> Candidate name</h3>
                                 <h3> Candidate number</h3>
                             </div>
-                        </div>
                     </div>
                 </div> 
             </div> 
@@ -422,7 +357,7 @@
                         <div class="btn-group-horizontal" role="group">
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber7">7</button>
                             <button type="button" class="btn btn-default btn-lg" id="keypadnumber8">8</button>
-                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber9">9</button>
+                            <button type="button" class="btn btn-default btn-lg" id="keypadnumber8">9</button>
                         </div>
                     </div>
                 </div>
@@ -447,6 +382,13 @@
             </div>
         </div>
      </div>
+     <div class="row" style="margin-left:1px">
+        <footer class="footer" style="width:400px;">
+            <p class="text-muted">
+                Press Confirm to cast vote <br> Press Search to filter only the relevant result</br>
+            </p>
+        </footer>
+    </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
         <script src="../bootstrap-3.3.1/assets/js/ie10-viewport-bug-workaround.js"></script>
 
