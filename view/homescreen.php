@@ -121,7 +121,6 @@
                         console.log(theState);
                         udpate_view();
                     } else {
-                        // TODO record vote in server
             			var voted_candidate = false; //change it. Figure out whether they voted for candidate
                         var candidate_num = "";
             			var race = "";
@@ -287,9 +286,11 @@
 
                 function parse_search_data(data){
                     console.log("Inside parse_search_data")
+					var html_str = "";
                     var unique_party_info = [true, "partyName", "partyNum", "imgSrc", "alt_text"];
                     var unique_candidate_info = [true, "candName", "candNum", "imgSrc"];
                     if (data.length == 0) {
+						html_str = "<p>No matching results to display.</p>";
                         unique_party_info[0] = false;
                         unique_candidate_info[0] = false;
                     } else {
@@ -301,57 +302,58 @@
                         unique_candidate_info[2] = data[0]["CandidateNumber"];
                         unique_candidate_info[3] = data[0]["ImageSrc"];
                         // TODO randomize data...
-
-        			//get distinct parties from the input data
-        			if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search
-        			    data = get_party_data(data);
-        			}
-                    if (data.length <= 9) {
-                        // pi = [2,4,6,1]; 
-                        var html_str = "";
-                        for (var i = 0; i<data.length; i++)
-                        {
-                            //var row = data[pi[i]];
-                            var row = data[i];
-                            var partyName = row["PartyName"];
-                            var partyNum = row["PartyNumber"];
-                            var partyImgSrc = row["PartyImageSrc"];
-                            var candName = row["CandidateName"];
-                            var candNum = row["CandidateNumber"];
-                            var imgSrc = row["ImageSrc"];
-                            var race = row["Race"];
-                            var imgHtml = "<img src='"+imgSrc+"'> </img>";
-        				    //TODO: I append party search in the search_result div, but probably we need to display somewhere else
-                            if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
-				                html_str += "<div class='col-xs-4 candidateVisible' " + 
-                                                    "id='search_result"+i.toString()+"'> " +
-                                                    "<img src='" + partyImgSrc + "' style='width:100px;height:95px'>" + 
-                                                    "<h3> " + partyName + "</h3>" +
-                                                    "<h3 id='search_result_candNum"+i.toString()+"'>" + partyNum + "</h3>" +
-                                                "</div>";
-                            } else { // candidate search
-    	    			        html_str += "<div class='col-xs-4 candidateVisible' " + 
-                                                            "id='search_result"+i.toString()+"'> " +
-                                                            "<img src='" + imgSrc + "' style='width:100px;height:95px'>" + 
-                                                            "<h3> " + candName + "</h3>" +
-                                                            "<h3 id='search_result_candNum"+i.toString()+"'>" + candNum + "</h3>" +
-                                                        "</div>";
-                            }
-                            if (partyName != unique_party_info[1]) {
-                                unique_party_info[0] = false;
-                                unique_candidate_info[0] = false;
-                            } if (candName != unique_candidate_info[1]) {
-                                unique_candidate_info[0] = false;
-                            }
-                            stateModule.changeState("party_info", unique_party_info);
-                            stateModule.changeState("candidate_info", unique_candidate_info);
-                        } else {
-                            html_str = "<p>Too many results to display</p>"
-
-                        }
-                    }
+					
+						//get distinct parties from the input data
+						if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search
+							data = get_party_data(data);
+						}
+						if (data.length <= 9) {
+							// pi = [2,4,6,1]; 
+							html_str = "";
+							for (var i = 0; i<data.length; i++)
+							{
+								//var row = data[pi[i]];
+								var row = data[i];
+								var partyName = row["PartyName"];
+								var partyNum = row["PartyNumber"];
+								var partyImgSrc = row["PartyImageSrc"];
+								var candName = row["CandidateName"];
+								var candNum = row["CandidateNumber"];
+								var imgSrc = row["ImageSrc"];
+								var race = row["Race"];
+								var imgHtml = "<img src='"+imgSrc+"'> </img>";
+								//TODO: I append party search in the search_result div, but probably we need to display somewhere else
+								if (parseInt(stateModule.getState("cursor_position")) < 2) { //party search 
+									html_str += "<div class='col-xs-4 candidateVisible' " + 
+														"id='search_result"+i.toString()+"'> " +
+														"<img src='" + partyImgSrc + "' style='width:100px;height:95px'>" + 
+														"<h3> " + partyName + "</h3>" +
+														"<h3 id='search_result_candNum"+i.toString()+"'>" + partyNum + "</h3>" +
+													"</div>";
+								} else { // candidate search
+									html_str += "<div class='col-xs-4 candidateVisible' " + 
+																"id='search_result"+i.toString()+"'> " +
+																"<img src='" + imgSrc + "' style='width:100px;height:95px'>" + 
+																"<h3> " + candName + "</h3>" +
+																"<h3 id='search_result_candNum"+i.toString()+"'>" + candNum + "</h3>" +
+															"</div>";
+								}
+								if (partyName != unique_party_info[1]) {
+									unique_party_info[0] = false;
+									unique_candidate_info[0] = false;
+								} if (candName != unique_candidate_info[1]) {
+									unique_candidate_info[0] = false;
+								}
+								stateModule.changeState("party_info", unique_party_info);
+								stateModule.changeState("candidate_info", unique_candidate_info); 
+							}												
+						} else {
+							html_str = "<p>Too many results to display</p>";
+						}
+					}
                     return html_str;
-                }
+				}
+				
                 $("#keypadSearch").click(function(){
                     console.log("Clicked keypadSearch");
 		    //replace search_results div with a loading gif image until data is fetched
@@ -395,18 +397,20 @@
 
                     console.log("voterInput" + voterInput);
                 });
-            });
-            function startsWith(str, prefix) {
-                return str.lastIndexOf(prefix, 0) === 0;
-            }
-            function getVoterInput(cursor_position) {
-                var voterInput = "";
-                for (i = 0; i < cursor_position; i++) {
-                    voterInput += $("#box".concat(i.toString())).text();
-                }
-                voterInput = voterInput.replace(/\D/g,'');  // trim away any non digits
-                return voterInput;
-            }
+				function startsWith(str, prefix) {
+					return str.lastIndexOf(prefix, 0) === 0;
+				}
+				function getVoterInput(cursor_position) {
+				
+					var voterInput = "";
+					for (i = 0; i < cursor_position; i++) {
+						voterInput += $("#box".concat(i.toString())).text();
+					}
+					voterInput = voterInput.replace(/\D/g,'');  // trim away any non digits
+					return voterInput;
+				}
+			
+			});
         </script>
     </head>
     <body>
