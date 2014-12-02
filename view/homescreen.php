@@ -449,7 +449,7 @@
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
                 <div class="col-xs-12" style="max-width:680px;">
-                    <div class="container" id="display">
+                    <div class="container" id="display" style="border:solid">
                         <div class="page-header">
                             <h1 id="race_name">Race Name</h1>
                             <div class="row">
@@ -510,7 +510,7 @@
                         </div>
                     </div>
                 </div> 
-            </div> 
+           
             
             <div class="col-xs-4" style="width:320px;height:400px">
                 <div class="row" style="width:320px;height:100px">
@@ -565,6 +565,7 @@
                     </div>
                 </div>
             </div>
+        </div>
         </div>
      </div>
         <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->

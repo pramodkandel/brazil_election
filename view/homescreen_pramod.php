@@ -241,7 +241,7 @@
         <div class="container" style="width:1000px;">
             <div class="row" style="max-width:1000px;">
                 <div class="col-xs-12" style="max-width:680px;">
-                    <div class="container">
+                    <div class="container" style="border:solid">
                         <div class="page-header">
                             <h1>Race Name</h1>
                             <div class="row">
@@ -290,38 +290,53 @@
                             <div></div>
                         </div>
 
-                        <div class="row" style="border:solid; border-width:2px">
+                        <div class="row">
                             <div id="retrieved"> </div>
                             <!-- TODO only display if search button pressed, check State-->
-                            <div class="col-xs-4" id="candidateHidden">
-                                <img src="candidate.jpg" style="width:100px;height:95px">
-                                <h3> Party name</h3>
-                                <h3> Candidate number</h3>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
                             </div>
-                            <div class="col-xs-4" id="candidateVisible">
-                                <img src="candidate.jpg" style="width:100px;height:95px">
-                                <h3> Candidate name</h3>
-                                <h3> Candidate number</h3>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
                             </div>
-                            <div class="col-xs-4" id="candidateHidden">
-                                <img src="candidate.jpg" style="width:100px;height:95px;">
-                                <h3> Candidate name</h3>
-                                <h3> Candidate number</h3>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
                             </div>
-                            <div class="col-xs-4" id="candidateVisible">
-                                <img src="candidate.jpg" style="width:100px;height:95px;">
-                                <h3> Candidate name</h3>
-                                <h3> Candidate number</h3>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
                             </div>
-                            <div class="col-xs-4" id="candidateHidden">
-                                <img src="candidate.jpg"  style="width:100px;height:95px;">
-                                <h3> Candidate name</h3>
-                                <h3> Candidate number</h3>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
                             </div>
-                            <div class="col-xs-4" id="candidateHidden">
-                                <img src="candidate.jpg"  style="width:100px;height:95px;">
-                                <h3> Candidate name</h3>
-                                <h3> Candidate number</h3>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
+                            </div>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
+                            </div>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
+                            </div>
+                            <div class="col-xs-4" id="candidateVisible" style="width:200px;height:150px">
+                                <img src="candidate.jpg" style="width:70px;height:70px">
+                                <h4> Candidate name</h4>
+                                <h4> Candidate number</h4>
                             </div>
                     </div>
                 </div> 
