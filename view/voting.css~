@@ -19,10 +19,12 @@ max-height:40px;
 }
 .candidateHidden{
 opacity:.2;
-
+border-style:solid;
+ border-width:1px;
 }
 .candidateVisible{
-
+border-style:solid;
+ border-width:1px;
 }
 .panel-body{
 width:100%;

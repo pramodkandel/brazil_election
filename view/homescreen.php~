@@ -381,12 +381,11 @@
 								}
 							
 							}
-										
+							stateModule.changeState("party_info", unique_party_info);
+							stateModule.changeState("candidate_info", unique_candidate_info); 												
 						} else {
 							html_str = "<p>Too many results to display</p>";
 						}
-						stateModule.changeState("party_info", unique_party_info);
-						stateModule.changeState("candidate_info", unique_candidate_info); 									
 					}
                     return html_str;
 				}
